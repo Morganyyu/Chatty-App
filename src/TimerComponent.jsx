@@ -1,12 +1,10 @@
-import React, {Component} from 'react';
-import ChatBar from './ChatBar.jsx';
-import MessageList from './MessageList.jsx';
-import Message from './Message.jsx';
-// import TimerComponent from './TimerComponent.jsx';
+import React, { Component } from 'react';
 
-class App extends Component {
+class TimerComponent extends Component {
+  // Set initial state so the component is initially "loading"
   constructor(props) {
     super(props);
+    // this is the *only* time you should assign directly to state:
     this.state = {loading: true};
   }
 
@@ -18,23 +16,16 @@ class App extends Component {
       this.setState({loading: false}); // this triggers a re-render!
     }, 3000)
   }
+
+  // Called any time the props or state changes. The JSX elements
+  // returned in this method will be rendered to the DOM.
   render() {
     if (this.state.loading) {
       return <h1>Loading...</h1>
-    } else { return (
-      <div>
-        <nav className="navbar">
-          <a href="/" className="navbar-brand">Chatty</a>
-        </nav>
-        <MessageList />
-        <Message />
-        <ChatBar />
-      </div>
-    )}
+    } else {
+      return <h1>3 seconds have elapsed and page is loaded</h1>
+    }
   }
 }
 
-
-
-export default App;
-
+export default TimerComponent;
