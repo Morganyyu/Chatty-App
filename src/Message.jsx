@@ -9,6 +9,7 @@ class Message extends Component {
           <span className="message-content">{this.props.content}</span>
 
         <div className="message system">
+          <span className="notification-content">{this.props.notif}</span>
         </div>
       </div>
     );
