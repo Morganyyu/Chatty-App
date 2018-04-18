@@ -2,35 +2,51 @@ import React, {Component} from 'react';
 import ChatBar from './ChatBar.jsx';
 import MessageList from './MessageList.jsx';
 import Message from './Message.jsx';
-// import TimerComponent from './TimerComponent.jsx';
+// const ws = new WebSocket('ws://localhost:3001');
+
+
 
 class App extends Component {
   constructor(props) {
     super(props);
-    this.state = {loading: true};
+    this.state = {
+        currentUser: {name: "merp"}, // optional. if currentUser is not defined, it means the user is Anonymous
+        messages: []
+    };
+    this.onNewMessage = this.onNewMessage.bind(this);
+  };
+
+  componentDidMount() {
+    this.socket = new WebSocket('ws://localhost:3001');
+    this.socket.onopen = function (event) {
+      console.log('websocket is connected ...');
+    };
+
+    this.socket.addEventListener('message', event => {
+      let msg = JSON.parse(event.data)
+      console.log(msg);
+      let updateMessages = this.state.messages.concat(msg);
+      this.setState({messages: updateMessages});
+    });
   }
 
-  // Called after the component was rendered and it was attached to the
-  // DOM. This is a good place to make AJAX requests or setTimeout.
-  componentDidMount() {
-    // After 3 seconds, set `loading` to false in the state.
-    setTimeout(() => {
-      this.setState({loading: false}); // this triggers a re-render!
-    }, 3000)
+
+  onNewMessage(msg){
+    // let newUser = {currentUser: name};
+    const newMessage = {username: this.state.currentUser.name, content: msg};
+    this.socket.send(JSON.stringify(newMessage));
   }
+
   render() {
-    if (this.state.loading) {
-      return <h1>Loading...</h1>
-    } else { return (
+     return (
       <div>
         <nav className="navbar">
           <a href="/" className="navbar-brand">Chatty</a>
         </nav>
-        <MessageList />
-        <Message />
-        <ChatBar />
+        <MessageList messages={this.state.messages}/>
+        <ChatBar currentUser={this.onNewMessage} onNewMessage={this.onNewMessage}/>
       </div>
-    )}
+    )
   }
 }
 
