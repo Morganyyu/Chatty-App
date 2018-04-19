@@ -30,6 +30,7 @@ class App extends Component {
       }
       if (msg.messageType === 'chat message' || msg.messageType === 'notification') {
         let updateMessages = this.state.messages.concat(msg);
+        console.log(msg);
         this.setState({messages: updateMessages});
       }
     });
@@ -37,13 +38,14 @@ class App extends Component {
 
 
   onNewMessage(msg){
-    const newMessage = {messageType: 'post message', username: this.state.currentUser.name, content: msg};
+    let url = msg.match(/(http)?s?:?(\/\/[^"'\s]*\.(?:png|jpg|jpeg|gif|png|svg))/g);
+    let content = msg.split(url);
+    let newMessage = {messageType: 'post message', username: this.state.currentUser.name,
+                      content: content, images: url};
     this.socket.send(JSON.stringify(newMessage));
   }
 
   onNewUser(username) {
-    console.log(username);
-
     let newName = username;
     if (this.state.currentUser.name !== newName) {
       const newNotif = {messageType: 'post notif', notif: this.state.currentUser.name + " has changed their name to " + newName};
@@ -51,6 +53,7 @@ class App extends Component {
       this.state.currentUser.name = newName;
     }
   }
+
 
   render() {
      return (
@@ -65,7 +68,6 @@ class App extends Component {
     )
   }
 }
-
 
 
 export default App;

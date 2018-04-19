@@ -9,7 +9,7 @@ class ChatBar extends Component {
     }
   }
   nameOnEnter(event) {
-    if (event.key === 'Enter'){
+    if (event.key === 'Enter' || event.key === 'Tab'){
       this.props.onNewUser(event.target.value ? event.target.value : 'Anonymous');
       console.log(event.target.value);
     }
