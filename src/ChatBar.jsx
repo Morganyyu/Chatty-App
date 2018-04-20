@@ -8,6 +8,8 @@ class ChatBar extends Component {
       event.target.value = '';
     }
   }
+
+  // Added 'Tab' key as people just tab to the next input field usually instead of pressing 'Enter' first
   nameOnEnter(event) {
     if (event.key === 'Enter' || event.key === 'Tab'){
       this.props.onNewUser(event.target.value ? event.target.value : 'Anonymous');

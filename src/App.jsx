@@ -8,18 +8,18 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-        currentUser: {name: 'Anonymous'},
-        messages: [],
-        numUsers: 0
+      currentUser: {name: 'Anonymous'},
+      messages: [],
+      numUsers: 0
     };
     this.onNewMessage = this.onNewMessage.bind(this);
     this.onNewUser = this.onNewUser.bind(this);
-  };
+  }
 
   componentDidMount() {
     this.socket = new WebSocket('ws://localhost:3001');
 
-    this.socket.onopen = function (event) {
+    this.socket.onopen = function () {
       console.log('websocket is connected ...');
     };
 
@@ -30,7 +30,6 @@ class App extends Component {
       }
       if (msg.messageType === 'chat message' || msg.messageType === 'notification') {
         let updateMessages = this.state.messages.concat(msg);
-        console.log(msg);
         this.setState({messages: updateMessages});
       }
     });
@@ -38,22 +37,25 @@ class App extends Component {
 
 
   onNewMessage(msg){
-    let url = msg.match(/(http)?s?:?(\/\/[^"'\s]*\.(?:png|jpg|jpeg|gif|png|svg))/g);
+    let url = msg.match(/(http)?s?:?(\/\/[^"']*\.(?:png|jpg|jpeg|gif|png|svg))/g);
     let content = msg.split(url);
+    let multiUrl;
+    if (url !== null) {
+      multiUrl = url.toString().match(/(http)?s?:?(\/\/[^"'\s]*\.(?:png|jpg|jpeg|gif|png|svg))/g);
+    }
     let newMessage = {messageType: 'post message', username: this.state.currentUser.name,
-                      content: content, images: url};
+                      content: content, images: multiUrl};
     this.socket.send(JSON.stringify(newMessage));
   }
 
   onNewUser(username) {
     let newName = username;
     if (this.state.currentUser.name !== newName) {
-      const newNotif = {messageType: 'post notif', notif: this.state.currentUser.name + " has changed their name to " + newName};
+      const newNotif = {messageType: 'post notif', notif: this.state.currentUser.name + ' has changed their name to ' + newName};
       this.socket.send(JSON.stringify(newNotif));
       this.state.currentUser.name = newName;
     }
   }
-
 
   render() {
      return (
